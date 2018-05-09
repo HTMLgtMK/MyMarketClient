@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">MyMarketClient</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_account">邮箱/手机号/用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登陆</string>
+    <string name="action_forget_password">忘记密码?</string>
+    <string name="action_imm_register">立即注册</string>
+    <string name="action_weixin_login">微信登陆</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_account">非法账户</string>
+    <string name="error_invalid_password">密码长度太短!</string>
+    <string name="error_incorrect_password">密码不正确!</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="username">账户</string>
+    <string name="mobile_or_email">手机号或邮箱</string>
+    <string name="user_login">登陆名</string>
+    <string name="user_pass">密码</string>
+    <string name="user_pass_confirm">确认密码</string>
+    <string name="name">用户实名</string>
+    <string name="verification_code">验证码</string>
+    <string name="get_verification_code">获取验证码</string>
+    <string name="register">注册</string>
+    <string name="submit">提交</string>
+
+    <!-- Strings related to client main page -->
+    <string name="scancode" >扫一扫</string>
+    <string name="payment">付款</string>
+    <string name="mydeal">我的消费</string>
+    <string name="mydiscount">我的优惠</string>
+    <string name="pointstore">积分商城</string>
+    <string name="mypoint">我的积分</string>
+    <string name="mybalance">电子零钱包</string>
+
+    <!-- Strings related to user grant -->
+    <string name="grant">授权</string>
+    <string name="grant_confirm">确认授权</string>
+    <string name="grant_msg">无人超市会员授权，将获取id，昵称, 头像, 积分和余额信息</string>
+    <string name="check_grant_req">检查授权请求...</string>
+
+</resources>

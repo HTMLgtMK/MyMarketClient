@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout_qr_code_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.gthncz.qrcodescannner.QrCodeScannerActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_qr_code"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:navigationIcon="@drawable/back_white_16"
+        >
+
+        <TextView
+            android:id="@+id/textView_qr_code_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <SurfaceView
+            android:id="@+id/surfaceView_qrcodeScanner_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <!-- ViewFinder 铺满全屏 二维码框 -->
+        <com.gthncz.qrcodescannner.ui.ScannerView
+            android:id="@+id/scannerView_qr_code_scan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </com.gthncz.qrcodescannner.ui.ScannerView>
+
+        <!-- 其它操作控件 -->
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolBar_client_main"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            >
+
+            <TextView
+                android:id="@+id/textView_client_main_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@android:color/white"
+                />
+
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/button_client_main_scanecode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/scancode"
+                android:textColor="@android:color/white"
+                android:drawableTop="@drawable/scancode_white_32"
+                android:padding="10dp"
+                android:drawablePadding="5dp"
+                />
+
+            <Button
+                android:id="@+id/button_client_main_payment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/payment"
+                android:textColor="@android:color/white"
+                android:drawableTop="@drawable/pay_white_32"
+                android:padding="10dp"
+                android:drawablePadding="5dp"
+                />
+        </LinearLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:columnCount="3"
+            android:rowCount="2"
+            >
+
+            <Button
+                android:id="@+id/button_client_main_mydeal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/mydeal"
+                android:drawableTop="@drawable/deal_32"
+                android:drawablePadding="5dp"
+                android:padding="10dp"
+                android:layout_column="0"
+                android:layout_row="0"
+                />
+
+            <Button
+                android:id="@+id/button_client_main_mydiscount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/mydiscount"
+                android:drawableTop="@drawable/discount_32"
+                android:drawablePadding="5dp"
+                android:padding="10dp"
+                android:layout_column="1"
+                android:layout_row="0"
+                />
+
+            <Button
+                android:id="@+id/button_client_main_pointstore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/pointstore"
+                android:drawableTop="@drawable/store_32"
+                android:drawablePadding="5dp"
+                android:padding="10dp"
+                android:layout_column="2"
+                android:layout_row="0"
+                />
+
+            <Button
+                android:id="@+id/button_client_main_mypoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/mypoint"
+                android:drawableTop="@drawable/point_32"
+                android:drawablePadding="5dp"
+                android:padding="10dp"
+                android:layout_column="0"
+                android:layout_row="1"
+                />
+
+            <Button
+                android:id="@+id/button_client_main_mybalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/mybalance"
+                android:drawableTop="@drawable/balance_32"
+                android:drawablePadding="5dp"
+                android:padding="10dp"
+                android:layout_column="1"
+                android:layout_row="1"
+                />
+
+        </GridLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

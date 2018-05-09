@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">qrcodescannner</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="msg_camera_framework_bug">开启相机失败!</string>
+    <string name="button_ok">确定</string>
+    <string name="permission_camera_rationale">扫描功能需要开启相机权限，否则无法正常使用!</string>
+    <string name="scanner_hint_text">将二维码/条形码置于框内, 即可自动扫描</string>
+
+</resources>

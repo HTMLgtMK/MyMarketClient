@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="black_overlay">#66000000</color>
+    <!-- color for ScannerView -->
+    <color name="colorCorner">#c83200ff</color>
+    <color name="colorScannerLineStart">#9600c8ff</color>
+    <color name="colorScannerLineCenter">#c83200ff</color>
+    <color name="colorScannerLineEnd">#9600c8ff</color>
+    <color name="colorMaskOutSide">#64000000</color>
+    <color name="colorHintText">#ffffff</color>
+</resources>

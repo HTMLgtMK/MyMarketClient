@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout_grant_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_grant"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        app:navigationIcon="@drawable/back_white_16">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="@string/grant"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
+    <ViewFlipper
+        android:id="@+id/viewFlipper_grant_togglePage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 加载界面 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="50dp" />
+
+            <TextView
+                android:id="@+id/textView_grant_loadingmsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/check_grant_req" />
+
+        </LinearLayout>
+
+        <!-- 授权确认界面 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/button_grant_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:background="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:text="@string/grant_confirm" />
+
+            <TextView
+                android:id="@+id/textView_grant_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/button_grant_confirm"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/grant_msg" />
+
+        </RelativeLayout>
+
+    </ViewFlipper>
+
+</LinearLayout>
