@@ -1,6 +1,8 @@
 package com.gthncz.mymarketclient.main;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,14 +59,17 @@ public class ScanResDispatch {
     private static void handlerOthers(Context context, String rawResult){
         AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setTitle("扫一扫");
-        builder.setMessage("获得Scanner返回数据:\\r\\n" + rawResult);
+        builder.setMessage("获得Scanner返回数据:\r\n" + rawResult);
         builder.setPositiveButton("复制到剪贴板", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO 复制到剪贴板
+                ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("plaintext", rawResult);
+                clipboardManager.setPrimaryClip(clipData);
             }
         });
         builder.setNegativeButton("取消", null);
-        builder.create().show();
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
