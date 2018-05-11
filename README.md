@@ -3,6 +3,56 @@
 
 -------------------------------------------------
 
+2018.05.11 20:34
+
+1. 完成了部分用户管理功能。
+	主要是显示用户当前状态，没有编辑功能。
+	另外，退出登陆时，不能完全退出程序。
+	
+2. 完成了应用管理功能。这个功能只是为了演示，并没有什么卵用，不过踩的坑倒是很多。
+	1. PreferenceActivity继承于ListActivity, 而`addPreferencesFromResource`方法已经弃用了(Android 3.0以上).
+		目前谷歌官方推荐使用的是使用`PreferenceActivity` + `PreferenceFragment`.
+	2. PreferenceActivity使用自定义layout (custom layout)时, 布局**一定**要包含一个**ListView**, 
+		其**id** **一定**要是**`android.id.list`**, 否则会出现错误:
+		> java.lang.RuntimeException:
+		> Your content must have a ListView whose id attribute is 'android.R.id.list'
+	3. PreferenceFragment不一定要在PreferenceActivity下，也可以是其他Activity。
+	4. 当使用 PreferenceActivity + PreferenceFragment , 并且 PreferenceFragment 只有一个时，
+		PreferenceActivity 可以不显示 `header` 直接显示PreferenceFragment, 方法如下:
+		1. 启动Activity是添加参数:
+		```java
+		/*启动PreferenceActivity处*/
+		Intent intent = new Intent(ClientActivity.this, SettingActivity.class);
+		intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+		intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingFragment.class.getName());
+		startActivity(intent);
+		```
+		2. PreferenceActivity内部重载方法 `isValidFragment`
+		```java
+		@Override
+		proteted void isValidFragment(String fragmentName){
+			if(fragmentName.equal(SettingFragment.class.getName())){
+				return true;
+			}
+			return super.isValidFragment(fragment);
+		}
+		```
+		注意这里的PreferenceFragment名称要里外一致，否则会报错IllegalArguments。
+
+3. `CoordinatorLayout` 的使用说明:
+	1. CoordinatorLayout 相当与一个FrameLayout .
+	2. CoordinatorLayout需要包裹一个可滚动的控件，比如NestedScrollView, RecycleView,
+        ListView, ScrollView都不支持!
+    3. 必须设置属性:
+		```xml
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		```
+        通知CoordinatorLayout该组件是可滑动的控件，然后CoordinatorLayout在接受到滑动时会通知AppBarLayout 中可滑动的Toolbar可以滑出屏幕了。
+		
+	示例代码见 `res/layout/layout_client_main`.
+	
+-------------------------------------------------
+
 2018.05.10 11:20
 
 1. 根据扫描的结果，分派解决方法：
