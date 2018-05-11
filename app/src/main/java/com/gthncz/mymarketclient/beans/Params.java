@@ -32,4 +32,6 @@ public class Params {
     public static final String URL_USER_GRANT = URL_SERVER_BASE + "api/user/User_Grant/grant";
     /*会员授权用户扫描检查授权地址*/
     public static final String URL_USER_SCAN = URL_SERVER_BASE + "api/user/User_Grant/scan";
+    /*会员登出地址*/
+    public static final String URL_USER_LOGOUT = URL_SERVER_BASE + "api/user/public/logout";
 }

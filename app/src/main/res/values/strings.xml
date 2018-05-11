@@ -18,7 +18,7 @@
     <string name="user_login">登陆名</string>
     <string name="user_pass">密码</string>
     <string name="user_pass_confirm">确认密码</string>
-    <string name="name">用户实名</string>
+    <string name="name">实名</string>
     <string name="verification_code">验证码</string>
     <string name="get_verification_code">获取验证码</string>
     <string name="register">注册</string>
@@ -38,5 +38,26 @@
     <string name="grant_confirm">确认授权</string>
     <string name="grant_msg">无人超市会员授权，将获取id，昵称, 头像, 积分和余额信息</string>
     <string name="check_grant_req">检查授权请求...</string>
+
+    <!-- Strings related to user info -->
+    <string name="user_management">用户管理</string>
+    <string name="avatar">头像</string>
+    <string name="user_nickname">昵称</string>
+    <string name="mobile">手机</string>
+    <string name="email">邮箱</string>
+    <string name="user_exit">退出登陆</string>
+    <string name="go_bind">去绑定</string>
+
+    <!-- Strings for settings -->
+    <string name="setting">设置</string>
+    <string name="notification">通知</string>
+    <string name="receive_noification">接收通知</string>
+    <string name="beep">响铃</string>
+    <string name="vibration">振动</string>
+    <string name="on">开</string>
+    <string name="off">关</string>
+    <string name="key_pref_notification">notification</string>
+    <string name="key_pref_beep">beep</string>
+    <string name="key_pref_vibration">vibration</string>
 
 </resources>

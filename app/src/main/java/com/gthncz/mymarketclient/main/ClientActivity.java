@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -34,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 无人超市客户端主界面
  * Created by GT on 2018/5/6.
  */
 
@@ -69,13 +71,7 @@ public class ClientActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         mNavigationView.setItemIconTintList(null);//让图片以原来的颜色显示
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // TODO to do click item event
-                return false;
-            }
-        });
+        mNavigationView.setNavigationItemSelectedListener(new MyNavigationItemSelectedListener());
         View headerView = mNavigationView.getHeaderView(0);
         mNickname = headerView.findViewById(R.id.textView_header_nickname);
         mAvatar = headerView.findViewById(R.id.imageView_header_avatar);
@@ -86,6 +82,10 @@ public class ClientActivity extends AppCompatActivity {
         super.onResume();
         /*获取当前登陆用户*/
         mUser = ClientApplication.getInstance().getUser();
+        if(mUser == null){
+            finish();// 可能是由于点了退出登陆，导致User信息为null
+        }
+        Log.e(getClass().getSimpleName(), "** 信息 >> in ClientMainActivity user: "+ mUser.toString());
         /*设置UI控件文字*/
         mNickname.setText(mUser.getUser_nickname());
     }
@@ -108,4 +108,27 @@ public class ClientActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private class MyNavigationItemSelectedListener implements NavigationView.OnNavigationItemSelectedListener{
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.account_item:{
+                    Intent intent = new Intent(ClientActivity.this, UserActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                case R.id.application_item:{
+                    Intent intent = new Intent(ClientActivity.this, SettingActivity.class);
+//                    intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+//                    intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingFragment.class.getName());
+                    startActivity(intent);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
 }

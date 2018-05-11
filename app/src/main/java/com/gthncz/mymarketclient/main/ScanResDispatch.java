@@ -41,11 +41,9 @@ public class ScanResDispatch {
             }else if(action.equals(ACTIONS[1])){//登陆请求
                 // TODO 登陆请求
             }else{//显示链接，有另外的界面显示
-                // TODO 显示链接界面
                 handlerOthers(context ,rawResult);
             }
         }else{
-            // TODO 显示链接界面
             handlerOthers(context ,rawResult);
         }
     }

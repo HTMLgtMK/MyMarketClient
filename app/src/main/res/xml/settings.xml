@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/setting"
+    >
+
+    <PreferenceCategory android:title="@string/notification">
+
+        <SwitchPreference
+            android:key="@string/key_pref_notification"
+            android:title="@string/notification"
+            android:summaryOn="@string/on"
+            android:summaryOff="@string/off"
+            android:defaultValue="true"
+            android:persistent="true"
+            >
+        </SwitchPreference>
+
+        <SwitchPreference
+            android:key="@string/key_pref_beep"
+            android:title="@string/beep"
+            android:summaryOn="@string/on"
+            android:summaryOff="@string/off"
+            android:defaultValue="true"
+            android:persistent="true"
+            android:dependency="@string/key_pref_notification"
+            >
+        </SwitchPreference>
+
+        <SwitchPreference
+            android:key="@string/key_pref_vibration"
+            android:title="@string/vibration"
+            android:summaryOn="@string/on"
+            android:summaryOff="@string/off"
+            android:defaultValue="true"
+            android:persistent="true"
+            android:dependency="@string/key_pref_notification"
+            >
+        </SwitchPreference>
+
+    </PreferenceCategory>
+</PreferenceScreen>

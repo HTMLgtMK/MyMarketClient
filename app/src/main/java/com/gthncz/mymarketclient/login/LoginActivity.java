@@ -129,9 +129,9 @@ public class LoginActivity extends AppCompatActivity {
                     User user = users.get(0);
                     UserToken token = tokens.get(0);
                     if(System.currentTimeMillis()/1000 < token.getExpire_time()){
-                        // TODO jump to next page directly
                         if(ClientApplication.DEBUG){
                             Log.i(getClass().getSimpleName(), "user in his duration, jump to next page directly !!!");
+                            Log.i(getClass().getSimpleName(), "** 信息 >> user: "+ user.toString());
                         }
                         ClientApplication.getInstance().setUser(user);
                         ClientApplication.getInstance().setToken(token.getToken());
@@ -305,6 +305,10 @@ public class LoginActivity extends AppCompatActivity {
                 user.setSex(userObj.getInt("sex"));
                 user.setUser_level(userObj.getInt("user_level"));
                 user.setMore(userObj.getString("more"));
+                user.setCreate_time(userObj.getInt("create_time"));
+                user.setPoint(userObj.getInt("point"));
+                user.setBalance(userObj.getInt("balance"));
+                user.setUser_nickname(userObj.getString("user_nickname"));
 
                 UserToken userToken = new UserToken();
                 userToken.setToken(tokenObj.getString("token"));
@@ -339,7 +343,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onDismissed(Snackbar transientBottomBar, int event) {
                         super.onDismissed(transientBottomBar, event);
-                        // TODO jump to next page
                         showClientMainPage();
                     }
                 });

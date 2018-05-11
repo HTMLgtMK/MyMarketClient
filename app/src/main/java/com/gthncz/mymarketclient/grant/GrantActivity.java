@@ -25,6 +25,7 @@ import com.gthncz.mymarketclient.ClientApplication;
 import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.User;
+import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,9 +83,8 @@ public class GrantActivity extends AppCompatActivity {
         User user = ClientApplication.getInstance().getUser();
         HashMap<String, String> map = new HashMap<>();
         map.put("token", mToken);
-        map.put("user_id", String.valueOf(user.getId()));
         JSONObject params = new JSONObject(map);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Params.URL_USER_SCAN, params, new Response.Listener<JSONObject>() {
+        MyUserJsonObjectRequest jsonObjectRequest = new MyUserJsonObjectRequest(Request.Method.POST, Params.URL_USER_SCAN, params, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -117,10 +117,8 @@ public class GrantActivity extends AppCompatActivity {
     protected void grantConfirm(){
         HashMap<String,String> map = new HashMap<>();
         map.put("token", mToken);
-        map.put("user_id", String.valueOf(mUser.getId()));
-        map.put("user_token", mUserToken);
         JSONObject jsonObject = new JSONObject(map);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Params.URL_USER_GRANT, jsonObject, new Response.Listener<JSONObject>() {
+        MyUserJsonObjectRequest request = new MyUserJsonObjectRequest(Request.Method.POST, Params.URL_USER_GRANT, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

@@ -232,7 +232,7 @@ public class User {
         return user_level;
     }
 
-    public void setUser_level(int user_level) {
+    public void setUser_level(long user_level) {
         this.user_level = user_level;
     }
 
@@ -268,10 +268,6 @@ public class User {
                 ", more='" + more + '\'' +
                 ", userLevelClazz=" + userLevelClazz +
                 '}';
-    }
-
-    public void setUser_level(long user_level) {
-        this.user_level = user_level;
     }
 
     /** To-one relationship, resolved on first access. */
