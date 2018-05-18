@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -224,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param mPassword
      */
     protected void submit(String mAccount, String mPassword){
+        hideKeyboard(); //隐藏软键盘
         HashMap<String, String> map = new HashMap<>();
         map.put("username", mAccount);
         map.put("password", mPassword);
@@ -357,6 +359,15 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ClientActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private void hideKeyboard(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(imm.isActive() && getCurrentFocus()!= null){
+            if(getCurrentFocus().getWindowToken() != null){
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
     }
 
     @Override

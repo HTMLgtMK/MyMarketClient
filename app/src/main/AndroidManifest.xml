@@ -35,6 +35,16 @@
 
         <activity android:name=".main.SettingActivity"></activity>
 
+        <activity android:name=".main.AccountActivity"></activity>
+
+        <activity android:name=".main.PointStoreActivity"></activity>
+
+        <activity android:name=".main.PointActivity" android:clearTaskOnLaunch="true"></activity>
+
+        <activity android:name=".main.Point2BalanceActivity"></activity>
+
+        <activity android:name=".main.BalanceActivity"></activity>
+
     </application>
 
 </manifest>

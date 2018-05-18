@@ -34,4 +34,16 @@ public class Params {
     public static final String URL_USER_SCAN = URL_SERVER_BASE + "api/user/User_Grant/scan";
     /*会员登出地址*/
     public static final String URL_USER_LOGOUT = URL_SERVER_BASE + "api/user/public/logout";
+    /*最近一周的账单获取地址*/
+    public static final String URL_WEEK_ACCOUNT = URL_SERVER_BASE + "api/client/Account/index";
+    /*账单地址*/
+    public static final String URL_ACCOUNT_LIST = URL_SERVER_BASE + "api/client/Account/account";
+    /*会员领取积分地址*/
+    public static final String URL_USER_OBTAIN_POINT = URL_SERVER_BASE + "api/user/User_Point/obtain";
+    /*会员积分地址*/
+    public static final String URL_USER_MYPOINT = URL_SERVER_BASE + "api/user/User_Point/mypoint";
+    /*会员积分转余额地址*/
+    public static final String URL_USER_POINT2BALANCE = URL_SERVER_BASE + "api/user/User_Point/point2balance";
+    /*会员余额地址*/
+    public static final String URL_USER_MYBALANCE = URL_SERVER_BASE + "api/user/User_Balance/mybalance";
 }

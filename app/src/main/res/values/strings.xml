@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">MyMarketClient</string>
 
+    <string name="loading">加载中...</string>
+    <string name="load_done">加载完成</string>
+    <string name="load_fail">加载失败</string>
+    <string name="load_full">----我是有底线的----</string>
+
     <!-- Strings related to login -->
     <string name="prompt_account">邮箱/手机号/用户名</string>
     <string name="prompt_password">密码</string>
@@ -32,6 +37,8 @@
     <string name="pointstore">积分商城</string>
     <string name="mypoint">我的积分</string>
     <string name="mybalance">电子零钱包</string>
+    <string name="week_account">最近一周消费</string>
+    <string name="com.gthncz.mymarketclient.helper.ScrollRecyclerViewBehavior">com.gthncz.mymarketclient.helper.ScrollRecyclerViewBehavior</string>
 
     <!-- Strings related to user grant -->
     <string name="grant">授权</string>
@@ -59,5 +66,29 @@
     <string name="key_pref_notification">notification</string>
     <string name="key_pref_beep">beep</string>
     <string name="key_pref_vibration">vibration</string>
+
+    <!-- Strings for pay status -->
+    <string name="pay_wait">等待付款</string>
+    <string name="pay_success">交易成功</string>
+    <string name="pay_expire">交易超时</string>
+    <string name="pay_cancel">交易取消</string>
+
+    <!-- Strings for accounts -->
+    <string name="account">账单</string>
+
+    <!-- Strings for point store -->
+    <string name="obtain">领取</string>
+    <string name="point_10">10积分</string>
+
+    <!-- Strings for my point -->
+    <string name="current_points">当前积分</string>
+    <string name="obtain_point">领取积分</string>
+    <string name="point2balance">转成余额</string>
+    <string name="exchange_num">转换数量</string>
+    <string name="obtain_balance">获得余额(元)</string>
+
+    <!-- Strings for my balance -->
+    <string name="current_balance">当前余额(元)</string>
+    <string name="inpour">充值</string>
 
 </resources>

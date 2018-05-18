@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- colors for deal status -->
+    <color name="status_pay_wait">#ff0000</color>
+    <color name="status_pay_success">#000000</color>
+    <color name="status_pay_expire">#ccccff</color>
+    <color name="status_pay_cancel">#ccccff</color>
+
 </resources>

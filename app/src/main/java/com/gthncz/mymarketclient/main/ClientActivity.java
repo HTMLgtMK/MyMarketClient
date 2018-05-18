@@ -1,34 +1,45 @@
 package com.gthncz.mymarketclient.main;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.gthncz.mymarketclient.ClientApplication;
 import com.gthncz.mymarketclient.R;
+import com.gthncz.mymarketclient.beans.DealBean;
 import com.gthncz.mymarketclient.beans.Params;
-import com.gthncz.mymarketclient.greendao.ClientDBHelper;
 import com.gthncz.mymarketclient.greendao.User;
-import com.gthncz.mymarketclient.greendao.UserDao;
+import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 import com.gthncz.qrcodescannner.QrCodeScannerActivity;
 import com.gthncz.qrcodescannner.camera.Intents;
 
-import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,12 +62,23 @@ public class ClientActivity extends AppCompatActivity {
     @BindView(R.id.button_client_main_pointstore) protected Button mPointStoreButton;
     @BindView(R.id.button_client_main_mypoint) protected Button mPointButton;
     @BindView(R.id.button_client_main_mybalance) protected Button mBalanceButton;
+    @BindView(R.id.nestedScrollView_client_main_wrapper) protected NestedScrollView mWrapper;
+    @BindView(R.id.recyclerView_client_week_account) protected RecyclerView mRecycleView;
+    @BindView(R.id.imageView_item_account_header_loading) protected ImageView mRefresh;
+
     // left menu resource
     @BindView(R.id.navigation_header_container) protected NavigationView mNavigationView;
     protected ImageView mAvatar;
     protected TextView mNickname;
 
     private User mUser;
+
+    // for week deal list
+    private ArrayList<DealBean> mWeekDealList;
+    private AccountListAdapter mAccountListAdapter;
+
+    private RequestQueue mRequestQueue;
+
     /*请求码*/
     private final int REQUEST_CODE_SCAN = 0x01;
 
@@ -75,6 +97,10 @@ public class ClientActivity extends AppCompatActivity {
         View headerView = mNavigationView.getHeaderView(0);
         mNickname = headerView.findViewById(R.id.textView_header_nickname);
         mAvatar = headerView.findViewById(R.id.imageView_header_avatar);
+
+        mWeekDealList = new ArrayList<>();
+        mRequestQueue = Volley.newRequestQueue(this);
+        mRequestQueue.start();
     }
 
     @Override
@@ -88,6 +114,8 @@ public class ClientActivity extends AppCompatActivity {
         Log.e(getClass().getSimpleName(), "** 信息 >> in ClientMainActivity user: "+ mUser.toString());
         /*设置UI控件文字*/
         mNickname.setText(mUser.getUser_nickname());
+        /*初始化最近一周账单*/
+        initWeekAccount();
     }
 
     @OnClick({R.id.button_client_main_scanecode})
@@ -95,6 +123,30 @@ public class ClientActivity extends AppCompatActivity {
         Intent intent = new Intent(this, QrCodeScannerActivity.class);
         intent.setAction(Intents.Scan.ACTION);
         startActivityForResult(intent, REQUEST_CODE_SCAN);
+    }
+
+    @OnClick({R.id.button_client_main_mydeal})
+    protected void showAccountActivity(){
+        Intent intent = new Intent(ClientActivity.this, AccountActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.button_client_main_pointstore})
+    protected void showPointStoreActivity(){
+        Intent intent = new Intent(ClientActivity.this, PointStoreActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.button_client_main_mypoint})
+    protected void showPointActivity(){
+        Intent intent = new Intent(ClientActivity.this, PointActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.button_client_main_mybalance})
+    protected void showBalanceActivity(){
+        Intent intent = new Intent(ClientActivity.this, BalanceActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -109,6 +161,7 @@ public class ClientActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /*侧边栏点击时间处理*/
     private class MyNavigationItemSelectedListener implements NavigationView.OnNavigationItemSelectedListener{
 
         @Override
@@ -131,4 +184,75 @@ public class ClientActivity extends AppCompatActivity {
         }
     }
 
+    protected void initWeekAccount(){
+        mRecycleView.setNestedScrollingEnabled(false);
+        mAccountListAdapter = new AccountListAdapter(this);
+        mAccountListAdapter.setDealList(mWeekDealList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mAccountListAdapter.setFooterViewClickedListener(null);// 在setAdapter前调用
+        mRecycleView.setAdapter(mAccountListAdapter);
+        mRecycleView.setLayoutManager(layoutManager);
+        mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_FULL);
+        loadWeekAccountlList();
+    }
+
+    @OnClick({R.id.imageView_item_account_header_loading})
+    protected void onRefreshWeekAccountList(){
+        loadWeekAccountlList();
+    }
+
+    private void loadWeekAccountlList(){
+        mWeekDealList.clear();
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 360);
+        mRefresh.startAnimation(rotateAnimation);
+        MyUserJsonObjectRequest jsonObjectRequest = new MyUserJsonObjectRequest(Request.Method.POST, Params.URL_WEEK_ACCOUNT, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(ClientActivity.class.getSimpleName(), response.toString());
+                mRefresh.clearAnimation();
+                try {
+                    int code = response.getInt("code");
+                    if(code == 1){
+                        JSONObject data = response.getJSONObject("data");
+                        JSONArray jsonArray = data.getJSONArray("sales");
+                        ArrayList<DealBean> list = DealBean.getDealListFromJSONObject(jsonArray);
+                        mWeekDealList.addAll(list);
+                        mAccountListAdapter.notifyDataSetChanged();
+                    }
+                    String msg = response.getString("msg");
+                    Log.e(ClientActivity.class.getSimpleName(), " ** 信息 >> getWeekAccount response : " + msg);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(ClientActivity.class.getSimpleName(), "** 信息 >> " + error.toString() );
+                mRefresh.clearAnimation();
+            }
+        });
+        mRequestQueue.add(jsonObjectRequest);
+    }
+
+    /*测试数据*/
+    private ArrayList<DealBean> getDealList(){
+        ArrayList<DealBean> dealLists = new ArrayList<>();
+        DealBean dealBean1 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean2 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean3 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean4 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean5 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean6 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean7 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean8 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean9 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        DealBean dealBean10 = new DealBean("0001", 1, 1, 1, "{}", 2000, 0, 2000, "{}", "", 1525939619, 1525939619, 3, "GT商铺");
+        dealLists.add(dealBean1);dealLists.add(dealBean2);
+        dealLists.add(dealBean3);dealLists.add(dealBean4);
+        dealLists.add(dealBean5);dealLists.add(dealBean6);
+        dealLists.add(dealBean7);dealLists.add(dealBean8);
+        dealLists.add(dealBean9);dealLists.add(dealBean10);
+        return dealLists;
+    }
 }
