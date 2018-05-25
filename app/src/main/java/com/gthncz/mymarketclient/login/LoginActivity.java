@@ -39,16 +39,14 @@ import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.ClientDBHelper;
 import com.gthncz.mymarketclient.greendao.User;
-import com.gthncz.mymarketclient.greendao.UserDao;
 import com.gthncz.mymarketclient.greendao.UserToken;
-import com.gthncz.mymarketclient.greendao.UserTokenDao;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.main.ClientActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,36 +109,6 @@ public class LoginActivity extends AppCompatActivity {
         // init valley request queue
         mQueue = Volley.newRequestQueue(getApplicationContext());
         mQueue.start();
-
-        // check current user status
-        checkCuurentUserStatus();
-    }
-
-    /**
-     * 检查当前用户的登陆状态
-     */
-    protected void checkCuurentUserStatus() {
-        SharedPreferences sharedPreferences = getSharedPreferences(Params.INI_NAME, MODE_PRIVATE);
-        if(sharedPreferences.contains(Params.KEY_CURRENT_USER_ID)){
-            long user_id = sharedPreferences.getLong(Params.KEY_CURRENT_USER_ID, 0);
-            if(user_id != 0){
-                List<User> users = ClientDBHelper.getInstance(this).getDaoSession().getUserDao().queryBuilder().where(UserDao.Properties.Id.eq(user_id)).limit(1).list();
-                List<UserToken> tokens = ClientDBHelper.getInstance(this).getDaoSession().getUserTokenDao().queryBuilder().where(UserTokenDao.Properties.User_id.eq(user_id)).limit(1).list();
-                if(users.size() > 0 && tokens.size()>0){
-                    User user = users.get(0);
-                    UserToken token = tokens.get(0);
-                    if(System.currentTimeMillis()/1000 < token.getExpire_time()){
-                        if(ClientApplication.DEBUG){
-                            Log.i(getClass().getSimpleName(), "user in his duration, jump to next page directly !!!");
-                            Log.i(getClass().getSimpleName(), "** 信息 >> user: "+ user.toString());
-                        }
-                        ClientApplication.getInstance().setUser(user);
-                        ClientApplication.getInstance().setToken(token.getToken());
-                        showClientMainPage();
-                    }//else the token has expired, have to relogin
-                }// else not login, nothing to do
-            }// else not login, nothin to do
-        }// else not login, nothing to do
     }
 
     /**
@@ -293,31 +261,10 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject tokenObj = mData.getJSONObject("token");
                 JSONObject userObj = mData.getJSONObject("user");
                 User user = new User();
-                user.setId(userObj.getLong("id"));
-                user.setName(userObj.getString("name"));
-                user.setMobile(userObj.getString("mobile"));
-                user.setUser_pass(userObj.getString("user_pass"));
-                user.setUser_status(userObj.getInt("user_status"));
-                user.setUser_login(userObj.getString("user_login"));
-                user.setUser_email(userObj.getString("user_email"));
-                user.setLast_login_ip(userObj.getString("last_login_ip"));
-                user.setLast_login_time(userObj.getInt("last_login_time"));
-                user.setUser_activation_key(userObj.getString("user_activation_key"));
-                user.setAvatar(userObj.getString("avatar"));
-                user.setSex(userObj.getInt("sex"));
-                user.setUser_level(userObj.getInt("user_level"));
-                user.setMore(userObj.getString("more"));
-                user.setCreate_time(userObj.getInt("create_time"));
-                user.setPoint(userObj.getInt("point"));
-                user.setBalance(userObj.getInt("balance"));
-                user.setUser_nickname(userObj.getString("user_nickname"));
-
+                parseUserJson(user, userObj);
                 UserToken userToken = new UserToken();
-                userToken.setToken(tokenObj.getString("token"));
-                userToken.setUser_id(tokenObj.getInt("user_id"));
-                userToken.setCreate_time(tokenObj.getInt("create_time"));
-                userToken.setExpire_time(tokenObj.getInt("expire_time"));
-                userToken.setDevice_type(tokenObj.getString("device_type"));
+                parseUserTokenJson(userToken, tokenObj);
+
                 /*保存会员数据到数据库*/
                 helper.getDaoSession().getUserDao().insertOrReplace(user);
                 helper.getDaoSession().getUserTokenDao().insertOrReplace(userToken);
@@ -326,9 +273,6 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putLong(Params.KEY_CURRENT_USER_ID, user.getId());
                 editor.commit();
-                /*保存当前会员到Application保存*/
-                ClientApplication.getInstance().setUser(user);
-                ClientApplication.getInstance().setToken(userToken.getToken());
             }catch (JSONException e){
                 e.printStackTrace();
                 return new Pair<>(0, e.getMessage());
@@ -352,6 +296,36 @@ public class LoginActivity extends AppCompatActivity {
             }else{
                 Snackbar.make(mWrapper, result.second, Snackbar.LENGTH_LONG).show();
             }
+        }
+
+        private void parseUserTokenJson(UserToken userToken, JSONObject tokenObj) throws JSONException {
+            userToken.setToken(tokenObj.getString("token"));
+            userToken.setUser_id(tokenObj.getInt("user_id"));
+            userToken.setCreate_time(tokenObj.getInt("create_time"));
+            userToken.setExpire_time(tokenObj.getInt("expire_time"));
+            userToken.setDevice_type(tokenObj.getString("device_type"));
+        }
+
+
+        private void parseUserJson(User user, JSONObject userObj) throws JSONException {
+            user.setId(userObj.getLong("id"));
+            user.setName(userObj.getString("name"));
+            user.setMobile(userObj.getString("mobile"));
+            user.setUser_pass(userObj.getString("user_pass"));
+            user.setUser_status(userObj.getInt("user_status"));
+            user.setUser_login(userObj.getString("user_login"));
+            user.setUser_email(userObj.getString("user_email"));
+            user.setLast_login_ip(userObj.getString("last_login_ip"));
+            user.setLast_login_time(userObj.getInt("last_login_time"));
+            user.setUser_activation_key(userObj.getString("user_activation_key"));
+            user.setAvatar(userObj.getString("avatar"));
+            user.setSex(userObj.getInt("sex"));
+            user.setUser_level(userObj.getInt("user_level"));
+            user.setMore(userObj.getString("more"));
+            user.setCreate_time(userObj.getInt("create_time"));
+            user.setPoint(userObj.getInt("point"));
+            user.setBalance(userObj.getInt("balance"));
+            user.setUser_nickname(userObj.getString("user_nickname"));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.gthncz.mymarketclient.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -19,6 +20,7 @@ import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.ClientDBHelper;
 import com.gthncz.mymarketclient.greendao.User;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 
 import org.json.JSONException;
@@ -41,6 +43,8 @@ public class BalanceActivity extends AppCompatActivity {
 
     private RequestQueue mQueue;
     private int mBalance;
+    private User mUser;
+    private String mToken;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +66,8 @@ public class BalanceActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mUser = MyLocalUserHelper.getLocalUser(this);
+        mToken = MyLocalUserHelper.getLocalToken(this);
         loadBalance();
     }
 
@@ -79,7 +85,8 @@ public class BalanceActivity extends AppCompatActivity {
 
     @OnClick({R.id.button_activity_balance_detail})
     protected void showDetail() {
-        // TODO 处理显示详情
+        Intent intent = new Intent(BalanceActivity.this, BalanceDetailActivity.class);
+        startActivity(intent);
     }
 
     protected void loadBalance() {
@@ -95,10 +102,8 @@ public class BalanceActivity extends AppCompatActivity {
                                 mBalance = data.getInt("balance");
                                 mCurrentBalance.setText(String.format("%.2f", (float)mBalance/100));
                                 // 更新数据库
-                                User user = ClientApplication.getInstance().getUser();
-                                user.setBalance(mBalance);
-                                ClientDBHelper.getInstance(BalanceActivity.this).getDaoSession().getUserDao().update(user);
-                                ClientApplication.getInstance().setUser(user);
+                                mUser.setBalance(mBalance);
+                                ClientDBHelper.getInstance(BalanceActivity.this).getDaoSession().getUserDao().update(mUser);
                             }else{
                                 Toast.makeText(BalanceActivity.this, msg, Toast.LENGTH_SHORT).show();
                             }
@@ -111,7 +116,12 @@ public class BalanceActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(BalanceActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
                     }
-        });
+        }){
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         mQueue.add(request);
     }
 

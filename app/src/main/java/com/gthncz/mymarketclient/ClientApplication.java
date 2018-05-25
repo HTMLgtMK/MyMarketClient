@@ -6,47 +6,31 @@ import com.gthncz.mymarketclient.greendao.User;
 
 /**
  * 存储部分全局变量
+ * 注: 在这里存储变换的全局变量不明智，
+ * 因为当应用由于内存低或者崩溃灯情况，
+ * 会重新create Application，导致
+ * 存储的全局变量为null.
+ * 对应解决方法是利用持久化存储。
+ *
  * Created by GT on 2018/5/5.
  */
 
 public class ClientApplication extends Application {
 
-    private static ClientApplication mInstance;
-
     public static final boolean DEBUG = true;
-
-    private User mUser;
-    private String mToken;
-
-    public synchronized void setUser(User user){
-        this.mUser = user;
-    }
-
-    public synchronized User getUser(){
-        return this.mUser;
-    }
-
-    public synchronized void setToken(String token){
-        this.mToken = token;
-    }
-
-    public synchronized String getToken(){
-        return mToken;
-    }
-
-    public synchronized static final ClientApplication getInstance(){
-        return mInstance;
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mInstance = this;
     }
 
     @Override
     public void onTerminate() {
-        mInstance = null;
         super.onTerminate();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
     }
 }

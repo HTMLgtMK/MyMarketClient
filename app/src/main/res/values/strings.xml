@@ -1,10 +1,16 @@
 <resources>
-    <string name="app_name">MyMarketClient</string>
+    <!-- MyMarketClient -->
+    <string name="app_name">GT无人超市</string>
 
     <string name="loading">加载中...</string>
     <string name="load_done">加载完成</string>
     <string name="load_fail">加载失败</string>
     <string name="load_full">----我是有底线的----</string>
+
+    <!-- Strings for header -->
+    <string name="about_item">关于软件</string>
+    <string name="user_item">用户管理</string>
+    <string name="setting_item">应用管理</string>
 
     <!-- Strings related to login -->
     <string name="prompt_account">邮箱/手机号/用户名</string>
@@ -37,6 +43,7 @@
     <string name="pointstore">积分商城</string>
     <string name="mypoint">我的积分</string>
     <string name="mybalance">电子零钱包</string>
+    <string name="discountstore">优惠广场</string>
     <string name="week_account">最近一周消费</string>
     <string name="com.gthncz.mymarketclient.helper.ScrollRecyclerViewBehavior">com.gthncz.mymarketclient.helper.ScrollRecyclerViewBehavior</string>
 
@@ -54,6 +61,7 @@
     <string name="email">邮箱</string>
     <string name="user_exit">退出登陆</string>
     <string name="go_bind">去绑定</string>
+    <string name="permission_read_external_storage_rational">更换头像需要读取内部存储, 请赋予权限!</string>
 
     <!-- Strings for settings -->
     <string name="setting">设置</string>
@@ -75,6 +83,8 @@
 
     <!-- Strings for accounts -->
     <string name="account">账单</string>
+    <string name="save">保存</string>
+    <string name="change">更换</string>
 
     <!-- Strings for point store -->
     <string name="obtain">领取</string>
@@ -90,5 +100,33 @@
     <!-- Strings for my balance -->
     <string name="current_balance">当前余额(元)</string>
     <string name="inpour">充值</string>
+    <string name="detail">明细</string>
+
+    <!-- Strings for discount store -->
+    <string name="obtain_discount">抢券</string>
+    <string name="possessed_discount">已领券</string>
+    <string name="expire_duration">有效期:</string>
+    <string name="vip">VIP</string>
+    <string name="all">ALL</string>
+
+    <!-- Strings for balance pay -->
+    <string name="check_payment_req">检查交易状态</string>
+    <string name="pay_subject">交易名称</string>
+    <string name="pay_id">交易单号</string>
+    <string name="pay_pay_amount">支付金额</string>
+    <string name="pay_time_start">创建时间</string>
+    <string name="pay_input_password">请输入支付密码</string>
+    <string name="pay_confirm">确认支付</string>
+    <string name="paying">支付中</string>
+    <string name="pay_password">支付密码</string>
+    <string name="status_unset">未设置</string>
+    <string name="modify">修改</string>
+
+    <!-- Strings for modify pay password -->
+    <string name="modity_pay_password_tip">请输入支付密码</string>
+    <string name="modifying">修改中</string>
+
+    <!-- Strings for about activity -->
+    <string name="about_app">GT无人超市客户端是配套GT无人超市系统使用的，该项目只用于学习使用!交流请联系GT_GameEmail@163.com</string>
 
 </resources>

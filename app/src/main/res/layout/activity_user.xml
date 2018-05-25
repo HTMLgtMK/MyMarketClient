@@ -60,11 +60,10 @@
                     android:layout_weight="1"
                     android:text="@string/avatar"
                     />
-                <ImageView
+                <com.gthncz.mymarketclient.helper.SquareImageView
                     android:id="@+id/imageView_user_avatar"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@mipmap/ic_launcher"
                     android:scaleType="centerCrop"
                     />
             </LinearLayout>
@@ -216,6 +215,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="#ccccff" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/pay_password"
+                    />
+                <TextView
+                    android:id="@+id/textView_user_pay_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/modify"
+                    android:drawablePadding="10dp"
+                    android:drawableEnd="@drawable/right_16"
+                    />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#ccccff" />
+
         </LinearLayout>
 
     </ScrollView>

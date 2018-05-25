@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.gthncz.mymarketclient.grant.GrantActivity;
+import com.gthncz.mymarketclient.payment.BPayActivity;
 
 /**
  * 扫描结果分派类
@@ -18,7 +19,7 @@ import com.gthncz.mymarketclient.grant.GrantActivity;
 public class ScanResDispatch {
 
     private static final String MARKET = "market://";
-    private static final String[] ACTIONS = {"grant", "login"};// ...
+    private static final String[] ACTIONS = {"grant", "login", "balancePay"};// ...
 
     private ScanResDispatch(){}
 
@@ -40,12 +41,23 @@ public class ScanResDispatch {
                 handleGrantReq(context, token);
             }else if(action.equals(ACTIONS[1])){//登陆请求
                 // TODO 登陆请求
+            }else if(action.equals(ACTIONS[2])){//支付请求
+                String token = str.substring(pos+1);
+                Log.e(ScanResDispatch.class.getSimpleName(), "** 信息 >> token:" + token);
+                handlerBalancePayReq(context, token);
             }else{//显示链接，有另外的界面显示
                 handlerOthers(context ,rawResult);
             }
         }else{
             handlerOthers(context ,rawResult);
         }
+    }
+
+    private static void handlerBalancePayReq(Context context, String token) {
+        // TODO 处理余额支付请求
+        Intent intent = new Intent(context, BPayActivity.class);
+        intent.putExtra("token", token);
+        context.startActivity(intent);
     }
 
     private static void handleGrantReq(Context context,final String token) {

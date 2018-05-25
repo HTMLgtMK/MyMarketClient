@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by GT on 2018/5/11.
  */
 
-public class MyUserJsonObjectRequest extends JsonObjectRequest {
+public abstract class MyUserJsonObjectRequest extends JsonObjectRequest {
 
     public MyUserJsonObjectRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);
@@ -32,10 +32,11 @@ public class MyUserJsonObjectRequest extends JsonObjectRequest {
      */
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        String userToken = ClientApplication.getInstance().getToken();
         HashMap<String, String> map = new HashMap<>();
-        map.put("XX-Token", userToken);
+        map.put("XX-Token", getUserToken());
         map.put("XX-Device-Type", "android");
         return map;
     }
+
+    public abstract String getUserToken();
 }

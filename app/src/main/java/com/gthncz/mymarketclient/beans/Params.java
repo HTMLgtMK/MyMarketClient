@@ -46,4 +46,24 @@ public class Params {
     public static final String URL_USER_POINT2BALANCE = URL_SERVER_BASE + "api/user/User_Point/point2balance";
     /*会员余额地址*/
     public static final String URL_USER_MYBALANCE = URL_SERVER_BASE + "api/user/User_Balance/mybalance";
+    /*会员余额明细地址*/
+    public static final String URL_USER_BALANCE_DETAIL = URL_SERVER_BASE +  "api/user/User_Balance/balanceIndex";
+    /*会员积分明细地址*/
+    public static final String URL_USER_POINT_DETAIL = URL_SERVER_BASE + "api/user/User_Point/pointIndex";
+    /*优惠广场地址*/
+    public static final String URL_DISCOUNT_STORE_INDEX = URL_SERVER_BASE + "api/market/Discount/index";
+    /*领取优惠地址*/
+    public static final String URL_DISCOUNT_OBTAIN = URL_SERVER_BASE + "api/market/Discount/obtain";
+    /*会员优惠列表地址*/
+    public static final String URL_USER_DISCOUNS = URL_SERVER_BASE + "api/market/Discount/mydiscount";
+    /*会员头像上传地址*/
+    public static final String URL_USER_AVATAR_UPLOAD = URL_SERVER_BASE + "api/user/Upload/uploadAvatar";
+    /*会员头像地址*/
+    public static final String URL_USER_AVATAR = URL_SERVER_BASE + "api/user/User_Info/avatar";
+    /*检查余额支付的状态地址*/
+    public static final String URL_CHECK_BALANCE_PAY_STATUS = URL_SERVER_BASE + "api/user/User_Payment/checkBalancePayStatus";
+    /*用户余额支付地址*/
+    public static final String URL_BALANCE_PAY = URL_SERVER_BASE + "api/user/User_Payment/balance_pay";
+    /*用户修改支付密码地址*/
+    public static final String URL_MODIFY_PAY_PASSWORD = URL_SERVER_BASE + "api/user/User_Payment/modify_pay_password";
 }

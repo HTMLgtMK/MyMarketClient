@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/group_header_1">
         <item
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/account"
             android:id="@+id/account_item"
-            android:title="账户管理"
+            android:title="@string/user_item"
             ></item>
     </group>
     <group android:id="@+id/group_header_2">
         <item
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/setting"
             android:id="@+id/application_item"
-            android:title="应用管理"
+            android:title="@string/setting_item"
             ></item>
     </group>
     <group android:id="@+id/group_header_3">
         <item
-            android:icon="@mipmap/ic_launcher"
-            android:id="@+id/abount_item"
-            android:title="关于软件"
+            android:icon="@drawable/about"
+            android:id="@+id/about_item"
+            android:title="@string/about_item"
             ></item>
     </group>
 </menu>

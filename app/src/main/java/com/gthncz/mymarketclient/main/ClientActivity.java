@@ -2,10 +2,12 @@ package com.gthncz.mymarketclient.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +16,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,12 +29,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.gthncz.mymarketclient.ClientApplication;
 import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.DealBean;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.User;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
+import com.gthncz.mymarketclient.helper.MyUserImageRequest;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
+import com.gthncz.mymarketclient.payment.BPayActivity;
 import com.gthncz.qrcodescannner.QrCodeScannerActivity;
 import com.gthncz.qrcodescannner.camera.Intents;
 
@@ -51,6 +56,7 @@ import butterknife.OnClick;
  */
 
 public class ClientActivity extends AppCompatActivity {
+    private static final String TAG = ClientActivity.class.getSimpleName();
 
     /* bind UI resource */
     // main page ui resource
@@ -72,6 +78,7 @@ public class ClientActivity extends AppCompatActivity {
     protected TextView mNickname;
 
     private User mUser;
+    private String mToken;
 
     // for week deal list
     private ArrayList<DealBean> mWeekDealList;
@@ -81,7 +88,7 @@ public class ClientActivity extends AppCompatActivity {
 
     /*请求码*/
     private final int REQUEST_CODE_SCAN = 0x01;
-
+    private final String KEY_WEEK_DEAL_LIST = "weekDealList";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +105,11 @@ public class ClientActivity extends AppCompatActivity {
         mNickname = headerView.findViewById(R.id.textView_header_nickname);
         mAvatar = headerView.findViewById(R.id.imageView_header_avatar);
 
-        mWeekDealList = new ArrayList<>();
+        if(savedInstanceState != null){
+            mWeekDealList = savedInstanceState.getParcelableArrayList(KEY_WEEK_DEAL_LIST);
+        }else{
+            mWeekDealList = new ArrayList<>();
+        }
         mRequestQueue = Volley.newRequestQueue(this);
         mRequestQueue.start();
     }
@@ -107,15 +118,47 @@ public class ClientActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         /*获取当前登陆用户*/
-        mUser = ClientApplication.getInstance().getUser();
+        mUser = MyLocalUserHelper.getLocalUser(this);
         if(mUser == null){
             finish();// 可能是由于点了退出登陆，导致User信息为null
         }
         Log.e(getClass().getSimpleName(), "** 信息 >> in ClientMainActivity user: "+ mUser.toString());
+        mToken = MyLocalUserHelper.getLocalToken(this);
         /*设置UI控件文字*/
         mNickname.setText(mUser.getUser_nickname());
+        /*设置UI控件显示头像*/
+        initUserAvatar();
         /*初始化最近一周账单*/
         initWeekAccount();
+    }
+
+    private void initUserAvatar() {
+        int maxWidth = mAvatar.getWidth();
+        int maxHeight = mAvatar.getHeight();
+        MyUserImageRequest request = new MyUserImageRequest(Params.URL_USER_AVATAR, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                mAvatar.setImageBitmap(response);
+            }
+        }, maxWidth, maxHeight, ImageView.ScaleType.CENTER_CROP, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mAvatar.setImageResource(R.drawable.temp_headerbackground);
+            }
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
+        request.addMarker(TAG);
+        mRequestQueue.add(request);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(KEY_WEEK_DEAL_LIST, mWeekDealList);
+        super.onSaveInstanceState(outState);
     }
 
     @OnClick({R.id.button_client_main_scanecode})
@@ -123,6 +166,14 @@ public class ClientActivity extends AppCompatActivity {
         Intent intent = new Intent(this, QrCodeScannerActivity.class);
         intent.setAction(Intents.Scan.ACTION);
         startActivityForResult(intent, REQUEST_CODE_SCAN);
+    }
+
+    @OnClick({R.id.button_client_main_payment})
+    protected void bpayAction(){
+//        Intent intent = new Intent(this, BPayActivity.class);
+//        intent.setAction(Intents.Scan.ACTION);
+//        startActivity(intent);
+        scanQrCodeAction();
     }
 
     @OnClick({R.id.button_client_main_mydeal})
@@ -146,6 +197,18 @@ public class ClientActivity extends AppCompatActivity {
     @OnClick({R.id.button_client_main_mybalance})
     protected void showBalanceActivity(){
         Intent intent = new Intent(ClientActivity.this, BalanceActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.button_client_main_mydiscount})
+    protected void showDiscountActivity(){
+        Intent intent = new Intent(ClientActivity.this, DiscountActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick({R.id.button_client_main_discountstore})
+    protected void showDiscountStoreActivity(){
+        Intent intent = new Intent(ClientActivity.this, DiscountStoreActivity.class);
         startActivity(intent);
     }
 
@@ -179,6 +242,11 @@ public class ClientActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 }
+                case R.id.about_item:{
+                    Intent intent = new Intent(ClientActivity.this, AboutActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
             }
             return false;
         }
@@ -193,7 +261,9 @@ public class ClientActivity extends AppCompatActivity {
         mRecycleView.setAdapter(mAccountListAdapter);
         mRecycleView.setLayoutManager(layoutManager);
         mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_FULL);
-        loadWeekAccountlList();
+        if(mWeekDealList.size() == 0) {
+            loadWeekAccountlList();
+        }
     }
 
     @OnClick({R.id.imageView_item_account_header_loading})
@@ -203,8 +273,8 @@ public class ClientActivity extends AppCompatActivity {
 
     private void loadWeekAccountlList(){
         mWeekDealList.clear();
-        RotateAnimation rotateAnimation = new RotateAnimation(0, 360);
-        mRefresh.startAnimation(rotateAnimation);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.refresh);
+        mRefresh.startAnimation(animation);
         MyUserJsonObjectRequest jsonObjectRequest = new MyUserJsonObjectRequest(Request.Method.POST, Params.URL_WEEK_ACCOUNT, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -212,7 +282,7 @@ public class ClientActivity extends AppCompatActivity {
                 mRefresh.clearAnimation();
                 try {
                     int code = response.getInt("code");
-                    if(code == 1){
+                    if (code == 1) {
                         JSONObject data = response.getJSONObject("data");
                         JSONArray jsonArray = data.getJSONArray("sales");
                         ArrayList<DealBean> list = DealBean.getDealListFromJSONObject(jsonArray);
@@ -228,10 +298,15 @@ public class ClientActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(ClientActivity.class.getSimpleName(), "** 信息 >> " + error.toString() );
+                Log.e(ClientActivity.class.getSimpleName(), "** 信息 >> " + error.toString());
                 mRefresh.clearAnimation();
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         mRequestQueue.add(jsonObjectRequest);
     }
 

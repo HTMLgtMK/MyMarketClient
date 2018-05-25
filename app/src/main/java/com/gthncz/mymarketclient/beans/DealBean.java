@@ -1,5 +1,8 @@
 package com.gthncz.mymarketclient.beans;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +14,7 @@ import java.util.ArrayList;
  * Created by GT on 2018/5/12.
  */
 
-public class DealBean {
+public class DealBean implements Parcelable {
 
     private String id;
     private long user_id;
@@ -207,4 +210,54 @@ public class DealBean {
         return dealList;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<DealBean> CREATOR = new Parcelable.Creator<DealBean>(){
+
+        @Override
+        public DealBean createFromParcel(Parcel source) {
+            DealBean bean = new DealBean();
+            bean.setId(source.readString());
+            bean.setUser_id(source.readLong());
+            bean.setStore_id(source.readInt());
+            bean.setTerminal_id(source.readInt());
+            bean.setGoods_detail(source.readString());
+            bean.setPay_amount(source.readInt());
+            bean.setDiscount_amount(source.readInt());
+            bean.setTotal_amount(source.readInt());
+            bean.setPay_detail(source.readString());
+            bean.setRemark(source.readString());
+            bean.setCreate_time(source.readLong());
+            bean.setModify_time(source.readLong());
+            bean.setStatus(source.readInt());
+            bean.setStore_name(source.readString());
+            return null;
+        }
+
+        @Override
+        public DealBean[] newArray(int size) {
+            return new DealBean[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeLong(user_id);
+        dest.writeInt(store_id);
+        dest.writeInt(terminal_id);
+        dest.writeString(goods_detail);
+        dest.writeInt(pay_amount);
+        dest.writeInt(discount_amount);
+        dest.writeInt(total_amount);
+        dest.writeString(pay_detail);
+        dest.writeString(remark);
+        dest.writeLong(create_time);
+        dest.writeLong(modify_time);
+        dest.writeInt(status);
+        dest.writeString(store_name);
+    }
 }

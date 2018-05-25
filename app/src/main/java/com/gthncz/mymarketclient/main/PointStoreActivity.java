@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.beans.PointStoreBean;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 import com.gthncz.mymarketclient.main.PointStoreAdapter.OnClickedObtainListener;
 
@@ -50,6 +51,8 @@ public class PointStoreActivity extends AppCompatActivity implements OnClickedOb
 
     private boolean isLoading;
     private RequestQueue mQueue;
+
+    private String mToken;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +105,7 @@ public class PointStoreActivity extends AppCompatActivity implements OnClickedOb
     @Override
     protected void onResume() {
         super.onResume();
+        mToken = MyLocalUserHelper.getLocalToken(this);
         (new InitLoadTask()).execute((Void) null);
     }
 
@@ -126,9 +130,9 @@ public class PointStoreActivity extends AppCompatActivity implements OnClickedOb
             public void onResponse(JSONObject response) {
                 try {
                     int code = response.getInt("code");
-                    if(code == 1){
+                    if (code == 1) {
                         Toast.makeText(PointStoreActivity.this, "获取积分成功!", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         Toast.makeText(PointStoreActivity.this, "获取积分失败!", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
@@ -141,7 +145,12 @@ public class PointStoreActivity extends AppCompatActivity implements OnClickedOb
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(PointStoreActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         mQueue.add(request);
     }
 

@@ -147,47 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean hasError = false;
-                View focusView = null;
-                if(TextUtils.isEmpty(mUsername.getText())){
-                    mUsername.setError(getResources().getString(R.string.error_field_required));
-                    hasError = true;
-                    focusView = mUsername;
-                }
-                if(TextUtils.isEmpty(mUserLogin.getText())){
-                    mUserLogin.setError(getResources().getString(R.string.error_field_required));
-                    hasError = true;
-                    focusView = mUserLogin;
-                }
-                if(TextUtils.isEmpty(mUserLogin.getText())){
-                    mUserLogin.setError(getResources().getString(R.string.error_field_required));
-                    hasError = true;
-                    focusView = mUserLogin;
-                }
-                if(TextUtils.isEmpty(mUserPassConfirm.getText())){
-                    mUserPassConfirm.setError(getResources().getString(R.string.error_field_required));
-                    hasError = true;
-                    focusView = mUserPassConfirm;
-                }
-                if(!TextUtils.equals(mUserPass.getText(), mUserPassConfirm.getText())){
-                    mUserPassConfirm.setError("两次输入密码不一致!");
-                    hasError = true;
-                    focusView = mUserPassConfirm;
-                }
-                if(TextUtils.isEmpty(mName.getText())){
-                    mName.setError(getResources().getString(R.string.error_field_required));
-                    hasError = true;
-                    focusView = mName;
-                }
-                if(TextUtils.isEmpty(mVerificationCode.getText())){
-                    mVerificationCode.setError(getResources().getString(R.string.error_field_required));
-                    hasError = true;
-                    focusView = mVerificationCode;
-                }
-                if(hasError){
-                    focusView.requestFocus();
-                    return;
-                }
+                if(!validateForm()) return;
 
                 String username = mUsername.getText().toString().trim();
                 String name = mName.getText().toString().trim();
@@ -249,6 +209,51 @@ public class RegisterActivity extends AppCompatActivity {
         progressBar.setPadding(40,40,40,40);
         dialog.setContentView(progressBar);
         return dialog;
+    }
+
+    /** 验证表单完整性 */
+    private boolean validateForm(){
+        boolean hasError = false;
+        View focusView = null;
+        if(TextUtils.isEmpty(mUsername.getText())){
+            mUsername.setError(getResources().getString(R.string.error_field_required));
+            hasError = true;
+            focusView = mUsername;
+        }
+        if(TextUtils.isEmpty(mUserLogin.getText())){
+            mUserLogin.setError(getResources().getString(R.string.error_field_required));
+            hasError = true;
+            focusView = mUserLogin;
+        }
+        if(TextUtils.isEmpty(mUserLogin.getText())){
+            mUserLogin.setError(getResources().getString(R.string.error_field_required));
+            hasError = true;
+            focusView = mUserLogin;
+        }
+        if(TextUtils.isEmpty(mUserPassConfirm.getText())){
+            mUserPassConfirm.setError(getResources().getString(R.string.error_field_required));
+            hasError = true;
+            focusView = mUserPassConfirm;
+        }
+        if(!TextUtils.equals(mUserPass.getText(), mUserPassConfirm.getText())){
+            mUserPassConfirm.setError("两次输入密码不一致!");
+            hasError = true;
+            focusView = mUserPassConfirm;
+        }
+        if(TextUtils.isEmpty(mName.getText())){
+            mName.setError(getResources().getString(R.string.error_field_required));
+            hasError = true;
+            focusView = mName;
+        }
+        if(TextUtils.isEmpty(mVerificationCode.getText())){
+            mVerificationCode.setError(getResources().getString(R.string.error_field_required));
+            hasError = true;
+            focusView = mVerificationCode;
+        }
+        if(hasError){
+            focusView.requestFocus();
+        }
+        return !hasError;
     }
 
 

@@ -30,6 +30,7 @@ import com.gthncz.mymarketclient.ClientApplication;
 import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.User;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 import com.gthncz.mymarketclient.login.LoginActivity;
 
@@ -57,6 +58,8 @@ public class Point2BalanceActivity extends AppCompatActivity {
 
     private int mPoint;
 
+    private String mToken;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +77,7 @@ public class Point2BalanceActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        User user = ClientApplication.getInstance().getUser();
+        User user = MyLocalUserHelper.getLocalUser(this);
         if(user == null){
             Snackbar snackbar = Snackbar.make(mWrapper, "会员未登陆!" , Snackbar.LENGTH_LONG);
             snackbar.addCallback(new Snackbar.Callback(){
@@ -88,6 +91,7 @@ public class Point2BalanceActivity extends AppCompatActivity {
             });
             snackbar.show();
         }
+        mToken = MyLocalUserHelper.getLocalToken(this);
         mPoint = user.getPoint();
         mCurrentPoint.setText(String.valueOf(mPoint));
         mExchangeNum.addTextChangedListener(new TextWatcher() {
@@ -141,15 +145,15 @@ public class Point2BalanceActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        if(dialog != null && dialog.isShowing()){
+                        if (dialog != null && dialog.isShowing()) {
                             dialog.dismiss();
                         }
                         try {
                             int code = response.getInt("code");
                             String msg = response.getString("msg");
                             Snackbar snackbar = Snackbar.make(mWrapper, msg, Snackbar.LENGTH_LONG);
-                            if(code == 1){
-                                snackbar.addCallback(new Snackbar.Callback(){
+                            if (code == 1) {
+                                snackbar.addCallback(new Snackbar.Callback() {
                                     @Override
                                     public void onDismissed(Snackbar transientBottomBar, int event) {
                                         super.onDismissed(transientBottomBar, event);
@@ -166,12 +170,17 @@ public class Point2BalanceActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(dialog != null && dialog.isShowing()){
+                if (dialog != null && dialog.isShowing()) {
                     dialog.dismiss();
                 }
                 Snackbar.make(mWrapper, error.toString(), Snackbar.LENGTH_LONG).show();
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
         requestQueue.start();

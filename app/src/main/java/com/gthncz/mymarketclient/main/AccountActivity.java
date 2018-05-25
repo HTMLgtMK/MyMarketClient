@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.Volley;
 import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.DealBean;
 import com.gthncz.mymarketclient.beans.Params;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 
 import org.json.JSONArray;
@@ -39,10 +41,14 @@ import butterknife.ButterKnife;
 
 public class AccountActivity extends AppCompatActivity {
 
-    @BindView(R.id.linearLayout_activity_account_wrapper) protected LinearLayout mWrapper;
-    @BindView(R.id.toolBar_activity_account) protected Toolbar mToolbar;
-    @BindView(R.id.swipeRefreshLayout_activity_account_refresh) protected SwipeRefreshLayout mRefresh;
-    @BindView(R.id.recycleView_activity_account_list) protected RecyclerView mRecyclerView;
+    @BindView(R.id.linearLayout_activity_account_wrapper)
+    protected LinearLayout mWrapper;
+    @BindView(R.id.toolBar_activity_account)
+    protected Toolbar mToolbar;
+    @BindView(R.id.swipeRefreshLayout_activity_account_refresh)
+    protected SwipeRefreshLayout mRefresh;
+    @BindView(R.id.recycleView_activity_account_list)
+    protected RecyclerView mRecyclerView;
 
     private AccountListAdapter mAccountListAdapter;
     private LinearLayoutManager mLinearLayoutManager;
@@ -54,6 +60,7 @@ public class AccountActivity extends AppCompatActivity {
 
     private RequestQueue mRequestQueue;
 
+    private String mToken;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +81,34 @@ public class AccountActivity extends AppCompatActivity {
         mRequestQueue = Volley.newRequestQueue(this);
         mRequestQueue.start();
 
+        mAccountListAdapter = new AccountListAdapter(this);
+        mAccountListAdapter.setDealList(mDealList);
+        mAccountListAdapter.setFooterViewClickedListener(new FooterViewHolder.OnMyFooterViewClickedListener() {
+            @Override
+            public void onClickedLoadFail() {
+                if (mLoading) return;
+                loadMore();
+            }
+        });
+        mRecyclerView.setAdapter(mAccountListAdapter);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    int pos = mLinearLayoutManager.findLastVisibleItemPosition();
+                    int total = mLinearLayoutManager.getItemCount();
+                    if (pos == total - 1 && mPage < mTotalPage) {
+                        loadMore();
+                    }
+                }
+            }
+        });
+
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -85,43 +120,19 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        mAccountListAdapter = new AccountListAdapter(this);
-        mAccountListAdapter.setDealList(mDealList);
-        mAccountListAdapter.setFooterViewClickedListener(new FooterViewHolder.OnMyFooterViewClickedListener() {
-            @Override
-            public void onClickedLoadFail() {
-                loadMore();
-            }
-        });
-        mRecyclerView.setAdapter(mAccountListAdapter);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if(dy<0) return;
-                int pos = mLinearLayoutManager.findLastVisibleItemPosition();
-                int total = mLinearLayoutManager.getItemCount();
-                if(pos == total-1){
-                    loadMore();
-                }
-            }
-        });
+        mToken = MyLocalUserHelper.getLocalToken(this);
         initLoad();
     }
 
     /**
      * 刷新加载
      */
-    private void initLoad(){
-        if(mLoading) return;
+    private void initLoad() {
+        if (mLoading) return;
         mPage = 1;
         mDealList.clear();
         mLoading = true;
-        mRefresh.measure(0,0);
+        mRefresh.measure(0, 0);
         mRefresh.setRefreshing(true);
         HashMap<String, String> map = new HashMap<>();
         map.put("page", String.valueOf(mPage));
@@ -134,7 +145,7 @@ public class AccountActivity extends AppCompatActivity {
                 Log.e(AccountActivity.class.getSimpleName(), response.toString());
                 try {
                     int code = response.getInt("code");
-                    if(code == 1){
+                    if (code == 1) {
                         JSONObject data = response.getJSONObject("data");
                         data = data.getJSONObject("sales");
                         int last_page = data.getInt("last_page");
@@ -144,13 +155,13 @@ public class AccountActivity extends AppCompatActivity {
                         mPage = current_page;
                         mTotalPage = last_page;
                         mDealList.addAll(list);
-                        if(current_page == last_page){
+                        if (current_page == last_page) {
                             mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_FULL, false);
-                        }else{
+                        } else {
                             mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_DONE, false);
                         }
                         mAccountListAdapter.notifyDataSetChanged();
-                    }else{
+                    } else {
                         String msg = response.getString("msg");
                         Snackbar.make(mWrapper, msg, Snackbar.LENGTH_LONG).show();
                     }
@@ -166,17 +177,22 @@ public class AccountActivity extends AppCompatActivity {
                 Log.e(AccountActivity.class.getSimpleName(), "** 信息 >> " + error.toString());
                 Snackbar.make(mWrapper, error.toString(), Snackbar.LENGTH_LONG).show();
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         mRequestQueue.add(request);
     }
 
-    private void loadMore(){
-        if(mLoading) return;
-        if(mTotalPage == mPage) return;// 已经是最后一页
+    private void loadMore() {
+        if (mLoading) return;
+        if (mTotalPage == mPage) return;// 已经是最后一页
         mLoading = true;
         mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOADING, false);
         HashMap<String, String> map = new HashMap<>();
-        map.put("page", String.valueOf(mPage+1)); // 下一页
+        map.put("page", String.valueOf(mPage + 1)); // 下一页
         JSONObject jsonObject = new JSONObject(map);
         MyUserJsonObjectRequest request = new MyUserJsonObjectRequest(Request.Method.POST, Params.URL_ACCOUNT_LIST, jsonObject, new Response.Listener<JSONObject>() {
             @Override
@@ -185,7 +201,7 @@ public class AccountActivity extends AppCompatActivity {
                 Log.e(AccountActivity.class.getSimpleName(), response.toString());
                 try {
                     int code = response.getInt("code");
-                    if(code == 1){
+                    if (code == 1) {
                         JSONObject data = response.getJSONObject("data");
                         data = data.getJSONObject("sales");
                         int last_page = data.getInt("last_page");
@@ -195,13 +211,13 @@ public class AccountActivity extends AppCompatActivity {
                         mPage = current_page;
                         mTotalPage = last_page;
                         mDealList.addAll(list);
-                        if(current_page == last_page){
+                        if (current_page == last_page) {
                             mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_FULL, false);
-                        }else{
+                        } else {
                             mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_DONE, false);
                         }
                         mAccountListAdapter.notifyDataSetChanged();// 更新数据, 包括更新底部的UI、
-                    }else{
+                    } else {
                         String msg = response.getString("msg");
                         Snackbar.make(mWrapper, msg, Snackbar.LENGTH_LONG).show();
                         mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_FAIL);
@@ -218,7 +234,12 @@ public class AccountActivity extends AppCompatActivity {
                 Snackbar.make(mWrapper, error.toString(), Snackbar.LENGTH_LONG).show();
                 mAccountListAdapter.setLoadStatus(FooterViewHolder.STATUS_LOAD_FAIL);
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         mRequestQueue.add(request);
     }
 
@@ -231,8 +252,8 @@ public class AccountActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:{
+        switch (item.getItemId()) {
+            case android.R.id.home: {
                 onBackPressed();
                 return true;
             }

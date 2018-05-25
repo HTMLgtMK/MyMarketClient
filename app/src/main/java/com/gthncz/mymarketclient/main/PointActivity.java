@@ -20,6 +20,7 @@ import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.ClientDBHelper;
 import com.gthncz.mymarketclient.greendao.User;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 
 import org.json.JSONException;
@@ -41,6 +42,8 @@ public class PointActivity extends AppCompatActivity {
 
     private RequestQueue mQueue;
     private int mPoint;
+    private User mUser;
+    private String mToken;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +64,8 @@ public class PointActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mUser = MyLocalUserHelper.getLocalUser(this);
+        mToken = MyLocalUserHelper.getLocalToken(this);
         loadPoint(); // 选择从服务器加载
     }
 
@@ -73,7 +78,8 @@ public class PointActivity extends AppCompatActivity {
 
     @OnClick({R.id.button_activity_point_detail})
     protected void showDetail(){
-        // TODO 处理积分详情
+        Intent intent = new Intent(PointActivity.this, PointDetailActivity.class);
+        startActivity(intent);
     }
 
     @OnClick({R.id.button_activity_point_obtain})
@@ -94,16 +100,14 @@ public class PointActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     int code = response.getInt("code");
-                    if(code == 1){
+                    if (code == 1) {
                         JSONObject data = response.getJSONObject("data");
                         mPoint = data.getInt("point");
                         mPoints.setText(String.valueOf(mPoint));
                         // 更新数据库
-                        User user = ClientApplication.getInstance().getUser();
-                        user.setPoint(mPoint);
-                        ClientDBHelper.getInstance(PointActivity.this).getDaoSession().getUserDao().update(user);
-                        ClientApplication.getInstance().setUser(user);
-                    }else{
+                        mUser.setPoint(mPoint);
+                        ClientDBHelper.getInstance(PointActivity.this).getDaoSession().getUserDao().update(mUser);
+                    } else {
                         String msg = response.getString("msg");
                         Toast.makeText(PointActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
@@ -116,7 +120,12 @@ public class PointActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(PointActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mToken;
+            }
+        };
         mQueue.add(request);
     }
 

@@ -25,6 +25,7 @@ import com.gthncz.mymarketclient.ClientApplication;
 import com.gthncz.mymarketclient.R;
 import com.gthncz.mymarketclient.beans.Params;
 import com.gthncz.mymarketclient.greendao.User;
+import com.gthncz.mymarketclient.helper.MyLocalUserHelper;
 import com.gthncz.mymarketclient.helper.MyUserJsonObjectRequest;
 
 import org.json.JSONException;
@@ -70,8 +71,8 @@ public class GrantActivity extends AppCompatActivity {
         super.onResume();
         Intent intent = getIntent();
         mToken = intent.getStringExtra("token");
-        mUser = ClientApplication.getInstance().getUser();
-        mUserToken = ClientApplication.getInstance().getToken();
+        mUser = MyLocalUserHelper.getLocalUser(this);
+        mUserToken = MyLocalUserHelper.getLocalToken(this);
         checkGrantReq();
     }
 
@@ -80,7 +81,6 @@ public class GrantActivity extends AppCompatActivity {
      * 检查授权请求状态
      */
     public void checkGrantReq(){
-        User user = ClientApplication.getInstance().getUser();
         HashMap<String, String> map = new HashMap<>();
         map.put("token", mToken);
         JSONObject params = new JSONObject(map);
@@ -90,9 +90,9 @@ public class GrantActivity extends AppCompatActivity {
                 try {
                     int code = response.getInt("code");
                     String msg = response.getString("msg");
-                    if( code == 1){
+                    if (code == 1) {
                         mPageToggle.showNext();
-                    }else{
+                    } else {
                         showMsgAndExit(msg);
                     }
                 } catch (JSONException e) {
@@ -105,7 +105,12 @@ public class GrantActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 showMsgAndExit(error.toString());
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mUserToken;
+            }
+        };
         mQueue.add(jsonObjectRequest);
         mQueue.start();
     }
@@ -124,10 +129,10 @@ public class GrantActivity extends AppCompatActivity {
                 try {
                     int code = response.getInt("code");
                     String msg = response.getString("msg");
-                    if(code == 1){
+                    if (code == 1) {
                         //授权成功
                         Snackbar snackbar = Snackbar.make(mWrapper, msg, Snackbar.LENGTH_SHORT);
-                        snackbar.addCallback(new Snackbar.Callback(){
+                        snackbar.addCallback(new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
@@ -135,7 +140,7 @@ public class GrantActivity extends AppCompatActivity {
                             }
                         });
                         snackbar.show();
-                    }else{
+                    } else {
                         showMsgAndExit(msg);
                     }
                 } catch (JSONException e) {
@@ -147,7 +152,12 @@ public class GrantActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 showMsgAndExit(error.toString());
             }
-        });
+        }) {
+            @Override
+            public String getUserToken() {
+                return mUserToken;
+            }
+        };
         mQueue.add(request);
     }
 
