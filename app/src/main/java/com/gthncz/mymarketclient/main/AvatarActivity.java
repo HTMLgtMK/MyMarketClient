@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -254,7 +255,12 @@ public class AvatarActivity extends AppCompatActivity {
         if(requestCode == REQ_CODE_PICK_PICTURE){
             if(resultCode == Activity.RESULT_OK){
                 Uri uri = data.getData();
-                cropPicture(uri);
+                // 根据系统版本，小于5.0的直接提交, 否则剪切
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    uploadAvatar(uri);
+                }else{
+                    cropPicture(uri);
+                }
             }
         }else if(requestCode == REQ_CODE_CROP_PICTURE){
             if(resultCode == Activity.RESULT_OK){

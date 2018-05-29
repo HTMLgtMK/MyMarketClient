@@ -26,6 +26,8 @@ public class CameraManager {
     /*预览回调接口*/
     private PreviewCallback mPreviewCallback;
 
+    private AutoFocusManager mAutoFocusManager;
+
     private CameraConfigManager mCameraConfigManager;
     /*保存用于获取预览框大小*/
     private ScannerView mScannerView;
@@ -86,6 +88,7 @@ public class CameraManager {
         if(camera != null && !mIsPreviewing){
             camera.startPreview();
             mIsPreviewing = true;
+            mAutoFocusManager = new AutoFocusManager(camera);
         }
     }
 
@@ -93,6 +96,10 @@ public class CameraManager {
      * 停止相机预览
      */
     public  synchronized void stopPreview(){
+        if (mAutoFocusManager != null) {
+            mAutoFocusManager.stop();
+            mAutoFocusManager = null;
+        }
         Camera camera = mCamera;
         if(camera != null && mIsPreviewing){
             camera.stopPreview();
